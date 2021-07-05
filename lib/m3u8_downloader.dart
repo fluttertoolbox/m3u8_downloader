@@ -10,11 +10,12 @@ typedef CallbackHandle _GetCallbackHandle(Function callback);
 typedef SelectNotificationCallback = Future<dynamic> Function();
 
 class M3u8Downloader {
-  static const MethodChannel _channel = const MethodChannel('vincent/m3u8_downloader', JSONMethodCodec());
-  static _GetCallbackHandle _getCallbackHandle = (Function callback) => PluginUtilities.getCallbackHandle(callback);
+  var _channel =
+      const MethodChannel('vincent/m3u8_downloader', JSONMethodCodec());
+  _GetCallbackHandle _getCallbackHandle =
+      (Function callback) => PluginUtilities.getCallbackHandle(callback);
 
-  static SelectNotificationCallback _onSelectNotification;
-
+  SelectNotificationCallback _onSelectNotification;
 
   ///  初始化下载器
   ///  在使用之前必须调用
@@ -27,16 +28,15 @@ class M3u8Downloader {
   /// - [threadCount] 同时下载的线程数
   /// - [debugMode] 调试模式
   /// - [onSelect] 点击通知的回调
-  static Future<bool> initialize({
-    String saveDir,
-    bool showNotification = true,
-    bool isConvert = true,
-    int connTimeout,
-    int readTimeout,
-    int threadCount,
-    bool debugMode,
-    SelectNotificationCallback onSelect
-  }) async {
+  Future<bool> initialize(
+      {String saveDir,
+      bool showNotification = true,
+      bool isConvert = true,
+      int connTimeout,
+      int readTimeout,
+      int threadCount,
+      bool debugMode,
+      SelectNotificationCallback onSelect}) async {
     final CallbackHandle handle = _getCallbackHandle(callbackDispatcher);
 
     if (handle == null) {
@@ -52,8 +52,7 @@ class M3u8Downloader {
       }
     });
 
-
-    final bool r = await _channel.invokeMethod<bool>('initialize',{
+    final bool r = await _channel.invokeMethod<bool>('initialize', {
       "handle": handle.toRawHandle(),
       "saveDir": saveDir,
       "showNotification": showNotification,
@@ -67,18 +66,20 @@ class M3u8Downloader {
   }
 
   /// 下载文件
-  /// 
+  ///
   /// - [url] 下载链接地址
   /// - [name] 下载文件名。(通知标题)
   /// - [progressCallback] 下载进度回调
   /// - [successCallback] 下载成功回调
   /// - [errorCallback] 下载失败回调
-  static void download({String url, String name, Function progressCallback, Function successCallback, Function errorCallback}) async {
+  void download(
+      {String url,
+      String name,
+      Function progressCallback,
+      Function successCallback,
+      Function errorCallback}) async {
     assert(url != null && url != "");
-    Map<String, dynamic> params = {
-      "url": url,
-      "name": name
-    };
+    Map<String, dynamic> params = {"url": url, "name": name};
     if (progressCallback != null) {
       final CallbackHandle handle = _getCallbackHandle(progressCallback);
       if (handle != null) {
@@ -102,34 +103,34 @@ class M3u8Downloader {
   }
 
   /// 暂停下载
-  /// 
+  ///
   /// - [url] 暂停指定的链接地址
-  static void pause(String url) async {
+  void pause(String url) async {
     assert(url != null && url != "");
 
-    await _channel.invokeMethod("pause", { "url": url });
+    await _channel.invokeMethod("pause", {"url": url});
   }
 
   /// 取消下载
-  /// 
+  ///
   /// - [url] 下载链接地址
   /// - [isDelete] 取消时是否删除文件
-  static void cancel(String url, { bool isDelete = false}) async {
+  void cancel(String url, {bool isDelete = false}) async {
     assert(url != null && url != "");
 
-    await _channel.invokeMethod("cancel", { "url": url, "isDelete": isDelete });
+    await _channel.invokeMethod("cancel", {"url": url, "isDelete": isDelete});
   }
 
   /// 下载状态
-  static Future<bool> isRunning() async {
+  Future<bool> isRunning() async {
     bool isRunning = await _channel.invokeMethod("isRunning");
     return isRunning;
   }
 
   /// 通过url获取M3U8路径
   /// - [url] 请求的URL
-  static Future<String> getM3U8Path(String url) async {
-    return await _channel.invokeMethod("getM3U8Path", { "url": url });
+  Future<String> getM3U8Path(String url) async {
+    return await _channel.invokeMethod("getM3U8Path", {"url": url});
   }
 
   /// 通过URL获取保存的路径
@@ -137,7 +138,7 @@ class M3u8Downloader {
   /// baseDir - 基础文件保存路径
   /// m3u8 - m3u8文件地址
   /// mp4 - mp4存储位置
-  static Future<dynamic> getSavePath(String url) async {
-    return await _channel.invokeMethod("getSavePath", { "url": url });
+  Future<dynamic> getSavePath(String url) async {
+    return await _channel.invokeMethod("getSavePath", {"url": url});
   }
 }

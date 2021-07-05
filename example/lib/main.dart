@@ -19,6 +19,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ReceivePort _port = ReceivePort();
+  var _downloader = M3u8Downloader();
 
   // 未加密的url地址
   String url1 = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsFlutterBinding.ensureInitialized();
 
     String saveDir = await _findSavePath();
-    M3u8Downloader.initialize(
+    _downloader.initialize(
         saveDir: saveDir,
         debugMode: false,
         onSelect: () {
@@ -123,7 +124,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   _checkPermission().then((hasGranted) async {
                     if (hasGranted) {
-                      M3u8Downloader.download(
+                      _downloader.download(
                           url: url1,
                           name: "下载未加密m3u8",
                           progressCallback: progressCallback,
@@ -137,7 +138,7 @@ class _MyAppState extends State<MyApp> {
               onPressed: () {
                 _checkPermission().then((hasGranted) async {
                   if (hasGranted) {
-                    M3u8Downloader.download(
+                    _downloader.download(
                         url: url2,
                         name: "下载已加密m3u8",
                         progressCallback: progressCallback,
@@ -150,7 +151,7 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("打开已下载的未加密的文件"),
               onPressed: () async {
-                var res = await M3u8Downloader.getSavePath(url1);
+                var res = await _downloader.getSavePath(url1);
                 print(res);
                 File mp4 = File(res['mp4']);
                 if (mp4.existsSync()) {
@@ -161,7 +162,7 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("打开已下载的已加密的文件"),
               onPressed: () async {
-                var res = await M3u8Downloader.getSavePath(url2);
+                var res = await _downloader.getSavePath(url2);
                 print(res);
                 File mp4 = File(res['mp4']);
                 if (mp4.existsSync()) {
