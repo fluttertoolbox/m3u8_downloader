@@ -47,6 +47,7 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
   private static final String CHANNEL_ID = "M3U8_DOWNLOADER_NOTIFICATION";
   private static final int NOTIFICATION_ID = 9527;
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+  private static final String PROCESS_NOTIFICATION = "PROCESS_NOTIFICATION";
 
 
   private static M3u8DownloaderPlugin instance;
@@ -386,11 +387,13 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
     } else if (status == 1) {
       if (isNotificationError) return;
       // 控制刷新Notification频率
-      if (progress < 100 && (progress - notificationProgress < 2)) {
-        Intent intent = new Intent(context, getMainActivityClass(context));
-        intent.setAction(SELECT_NOTIFICATION);
-        return;
 
+      Intent intent = new Intent(context, getMainActivityClass(context));
+      intent.setAction(PROCESS_NOTIFICATION);
+      PendingIntent pendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+      builder.setContentIntent(pendingIntent);
+      if (progress < 100 && (progress - notificationProgress < 2)) {
+        return;
       }
       
       notificationProgress = progress;
@@ -443,6 +446,9 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
     if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+      channel.invokeMethod("selectNotification", null);
+      return true;
+    }else if (PROCESS_NOTIFICATION.equals(intent.getAction())) {
       channel.invokeMethod("selectNotification", null);
       return true;
     }

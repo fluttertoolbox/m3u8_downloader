@@ -6,3 +6,4 @@
 
 build/
 /example/build
+/example/android/.gradle
