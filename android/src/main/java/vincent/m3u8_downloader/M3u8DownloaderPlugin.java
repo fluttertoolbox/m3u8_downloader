@@ -387,8 +387,12 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
       if (isNotificationError) return;
       // 控制刷新Notification频率
       if (progress < 100 && (progress - notificationProgress < 2)) {
+        Intent intent = new Intent(context, getMainActivityClass(context));
+        intent.setAction(SELECT_NOTIFICATION);
         return;
+
       }
+      
       notificationProgress = progress;
       builder.setContentText("Downloading...")
               .setProgress(100, progress, false);
