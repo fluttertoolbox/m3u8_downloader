@@ -37,6 +37,8 @@ class _MyAppState extends State<MyApp> {
     _downloader.initialize(
         saveDir: saveDir,
         debugMode: false,
+        isConvert: false,
+        showNotification: true,
         onSelect: () {
           print('下载成功点击');
           return null;
@@ -139,12 +141,12 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               child: Text("Get File Status"),
               onPressed: () async {
-                var res = await _downloader.getSavePath(url);
+                var res = await _downloader.getM3U8Path(url);
                 print(res);
-                File mp4 = File(res['mp4']);
-                if (mp4.existsSync()) {
-                  OpenFile.open(res['mp4']);
-                }
+                // File mp4 = File(res['mp4']);
+                // if (mp4.existsSync()) {
+                //   OpenFile.open(res['mp4']);
+                // }
               },
             ),
           ],
