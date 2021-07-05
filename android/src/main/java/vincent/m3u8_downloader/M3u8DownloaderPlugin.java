@@ -380,7 +380,7 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
     if (status == 0) {
       isNotificationError = false;
       notificationProgress = -100;
-      builder.setContentText("等待下载...").setProgress(0, 0, true);
+      builder.setContentText("Preparing To Download...").setProgress(0, 0, true);
       builder.setOngoing(true)
               .setSmallIcon(android.R.drawable.stat_sys_download_done);
     } else if (status == 1) {
@@ -390,7 +390,7 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
         return;
       }
       notificationProgress = progress;
-      builder.setContentText("正在下载...")
+      builder.setContentText("Downloading...")
               .setProgress(100, progress, false);
       builder.setOngoing(true)
               .setSmallIcon(android.R.drawable.stat_sys_download);
@@ -401,20 +401,20 @@ public class M3u8DownloaderPlugin implements FlutterPlugin, PluginRegistry.NewIn
       PendingIntent pendingIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
       builder.setContentIntent(pendingIntent);
 
-      builder.setContentText("下载完成").setProgress(0, 0, false);
+      builder.setContentText("Download Complete").setProgress(0, 0, false);
       builder.setOngoing(false)
               .setSmallIcon(android.R.drawable.stat_sys_download_done);
     } else if (status == 3) {
       isNotificationError = true;
-      builder.setContentText("下载失败").setProgress(0, 0, false);
+      builder.setContentText("Download failed").setProgress(0, 0, false);
       builder.setOngoing(false)
               .setSmallIcon(android.R.drawable.stat_sys_download_done);
     } else if (status == 4) {
-      builder.setContentText("暂停下载").setProgress(0, 0, false);
+      builder.setContentText("Pause Download").setProgress(0, 0, false);
       builder.setOngoing(false)
               .setSmallIcon(android.R.drawable.stat_sys_download);
     } else if (status == 5) {
-      builder.setContentText("正在转成MP4").setProgress(100, 100, true);
+      builder.setContentText("Converting To Mp4").setProgress(100, 100, true);
       builder.setOngoing(true)
               .setSmallIcon(android.R.drawable.stat_sys_download);
     }

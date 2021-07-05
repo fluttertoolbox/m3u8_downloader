@@ -18,15 +18,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   ReceivePort _port = ReceivePort();
 
   // 未加密的url地址
-  String url1 = "https://iqiyi.cdn9-okzy.com/20200711/xxxxxxxxxxxxxxxxxxx/index.m3u8";
+  String url1 = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
   // 加密的url地址
-  String url2 = "http://video.huishenghuo888888.com:8091/jingpin/20200801/xxxxxxxxxxxxxxxxx/index.m3u8";
+  String url2 =
+      "http://video.huishenghuo888888.com:8091/jingpin/20200801/xxxxxxxxxxxxxxxxx/index.m3u8";
 
-  
   @override
   void initState() {
     super.initState();
@@ -43,10 +42,10 @@ class _MyAppState extends State<MyApp> {
         onSelect: () {
           print('下载成功点击');
           return null;
-        }
-    );
+        });
     // 注册监听器
-    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
       // 监听数据请求
       print(data);
@@ -55,9 +54,12 @@ class _MyAppState extends State<MyApp> {
 
   Future<bool> _checkPermission() async {
     if (Platform.isAndroid) {
-      PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+      PermissionStatus permission = await PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.storage);
       if (permission != PermissionStatus.granted) {
-        Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+        Map<PermissionGroup, PermissionStatus> permissions =
+            await PermissionHandler()
+                .requestPermissions([PermissionGroup.storage]);
         if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
           return true;
         }
@@ -84,17 +86,27 @@ class _MyAppState extends State<MyApp> {
   }
 
   static progressCallback(dynamic args) {
-    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
     args["status"] = 1;
-	  send.send(args);
+    send.send(args);
   }
+
   static successCallback(dynamic args) {
-    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
-	  send.send({"status": 2, "url": args["url"], "filePath": args["filePath"], "dir": args["dir"]});
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send.send({
+      "status": 2,
+      "url": args["url"],
+      "filePath": args["filePath"],
+      "dir": args["dir"]
+    });
   }
+
   static errorCallback(dynamic args) {
-    final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port');
-	  send.send({"status": 3, "url": args["url"]});
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send.send({"status": 3, "url": args["url"]});
   }
 
   @override
@@ -107,20 +119,19 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           children: <Widget>[
             RaisedButton(
-              child: Text("下载未加密m3u8"),
-              onPressed: () {
-              _checkPermission().then((hasGranted) async {
-                if (hasGranted) {
-                  M3u8Downloader.download(
-                      url: url1,
-                      name: "下载未加密m3u8",
-                      progressCallback: progressCallback,
-                      successCallback: successCallback,
-                      errorCallback: errorCallback
-                  );
-                }
-              });
-            }),
+                child: Text("下载未加密m3u8"),
+                onPressed: () {
+                  _checkPermission().then((hasGranted) async {
+                    if (hasGranted) {
+                      M3u8Downloader.download(
+                          url: url1,
+                          name: "下载未加密m3u8",
+                          progressCallback: progressCallback,
+                          successCallback: successCallback,
+                          errorCallback: errorCallback);
+                    }
+                  });
+                }),
             RaisedButton(
               child: Text("下载已加密m3u8"),
               onPressed: () {
@@ -131,8 +142,7 @@ class _MyAppState extends State<MyApp> {
                         name: "下载已加密m3u8",
                         progressCallback: progressCallback,
                         successCallback: successCallback,
-                        errorCallback: errorCallback
-                    );
+                        errorCallback: errorCallback);
                   }
                 });
               },
@@ -140,12 +150,12 @@ class _MyAppState extends State<MyApp> {
             RaisedButton(
               child: Text("打开已下载的未加密的文件"),
               onPressed: () async {
-                  var res = await M3u8Downloader.getSavePath(url1);
-                  print(res);
-                  File mp4 = File(res['mp4']);
-                  if (mp4.existsSync()) {
-                    OpenFile.open(res['mp4']);
-                  }
+                var res = await M3u8Downloader.getSavePath(url1);
+                print(res);
+                File mp4 = File(res['mp4']);
+                if (mp4.existsSync()) {
+                  OpenFile.open(res['mp4']);
+                }
               },
             ),
             RaisedButton(
