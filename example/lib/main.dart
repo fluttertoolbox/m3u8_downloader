@@ -22,11 +22,7 @@ class _MyAppState extends State<MyApp> {
   ReceivePort _port = ReceivePort();
 
   // 未加密的url地址
-  String url1 =
-      "https://iqiyi.cdn9-okzy.com/20200711/xxxxxxxxxxxxxxxxxxx/index.m3u8";
-  // 加密的url地址
-  String url2 =
-      "http://video.huishenghuo888888.com:8091/jingpin/20200801/xxxxxxxxxxxxxxxxx/index.m3u8";
+  String url = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 
   @override
   void initState() {
@@ -119,14 +115,15 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            RaisedButton(
-                child: Text("下载未加密m3u8"),
+            ElevatedButton(
+                child: Text("Start Download"),
                 onPressed: () {
                   _checkPermission().then((hasGranted) async {
                     if (hasGranted) {
                       _downloader.download(
-                          url: url1,
+                          url: url,
                           name: "下载未加密m3u8",
                           progressCallback: progressCallback,
                           successCallback: successCallback,
@@ -134,36 +131,15 @@ class _MyAppState extends State<MyApp> {
                     }
                   });
                 }),
-            RaisedButton(
-              child: Text("下载已加密m3u8"),
-              onPressed: () {
-                _checkPermission().then((hasGranted) async {
-                  if (hasGranted) {
-                    _downloader.download(
-                        url: url2,
-                        name: "下载已加密m3u8",
-                        progressCallback: progressCallback,
-                        successCallback: successCallback,
-                        errorCallback: errorCallback);
-                  }
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text("打开已下载的未加密的文件"),
+            ElevatedButton(
+                child: Text("Stop Download"),
+                onPressed: () {
+                  _downloader.cancel(url);
+                }),
+            ElevatedButton(
+              child: Text("Get File Status"),
               onPressed: () async {
-                var res = await _downloader.getSavePath(url1);
-                print(res);
-                File mp4 = File(res['mp4']);
-                if (mp4.existsSync()) {
-                  OpenFile.open(res['mp4']);
-                }
-              },
-            ),
-            RaisedButton(
-              child: Text("打开已下载的已加密的文件"),
-              onPressed: () async {
-                var res = await _downloader.getSavePath(url2);
+                var res = await _downloader.getSavePath(url);
                 print(res);
                 File mp4 = File(res['mp4']);
                 if (mp4.existsSync()) {
